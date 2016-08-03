@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react'
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute } from 'react-router'
 import routes from 'routes'
+import auth from 'utils/auth'
+import {hasAuth} from 'utils/userauth'
 
 // import 'styles/index.less'
 import 'antd/lib/style/index.less'
@@ -17,16 +19,28 @@ const asyncLoader = component => (location, cb) => {
   })
 }
 
-const walkRoutes = sets =>
+const routeOnEnter = (oldOnEnter, level, module) => (nextState, replace) => {
+  if (!auth.hasAuthorization && (nextState.location.pathname.indexOf('/login') === -1)) {
+    replace('/login')
+  }
+  if (!hasAuth(level, module)) {
+    replace('/403')
+  }
+  if (oldOnEnter) {
+    oldOnEnter(nextState, replace)
+  }
+}
+
+const walkRoutes = (sets, level, module) =>
   Object.keys(sets).map(path => {
     const value = sets[path]
 
     return (
-      <Route key={path} path={path} getComponent={asyncLoader(value.component)}>
+      <Route key={path} path={path} getComponent={asyncLoader(value.component)} onEnter={routeOnEnter(value.onEnter, value.level || level, value.module || module)}>
         { value.indexroute &&
           <IndexRoute getComponent={asyncLoader(value.indexroute)} /> }
         { value.childroutes &&
-          walkRoutes(value.childroutes) }
+          walkRoutes(value.childroutes, value.level || level, value.module || module) }
       </Route>
     )
   })

@@ -76,7 +76,6 @@ const configStraight = options => {
 
 const configDispatcher = options => {
   const dispatcher = CONFIG.DISPATCHER
-
   // 未开启代理
   if (!dispatcher) {
     return
@@ -228,7 +227,7 @@ export default class REST {
     configStraight(options)
 
     // dispatcher
-    options.flag !== -1 && configDispatcher(options)
+    // options.flag !== -1 && configDispatcher(options)
 
     // authorization
     configAuthorization(options)
