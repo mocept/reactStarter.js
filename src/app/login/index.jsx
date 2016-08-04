@@ -13,7 +13,7 @@ import { fetchUser } from 'redux/actions/users'
 
 @connect(state => ({
   user_id: state.tokens.user_id,
-  entities: state.users.entities
+  user: state.users.user
 }), dispatch => ({
   ...bindActionCreators({ login, fetchUser, redirect }, dispatch)
 }))
@@ -43,7 +43,7 @@ export default class extends Component {
     // from tokens
     if (props.user_id) {
       // from users
-      if (props.entities[props.user_id]) {
+      if (props.user && props.user.user_id === props.user_id) {
         this.context.router.push('/')
       } else {
         props.fetchUser(props.user_id)

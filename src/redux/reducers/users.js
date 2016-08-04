@@ -1,7 +1,8 @@
 import { handleActions } from 'redux-actions'
+import {FETCH_USER, FETCH_USERS} from '../constants'
 
 const transform = (state, items = [], uniqueId) => {
-  const { ids, entities, ...rest } = state
+  const { ids, entities, ...rest } = state.users
 
   items.forEach(item => {
     const id = item[uniqueId]
@@ -15,23 +16,15 @@ const transform = (state, items = [], uniqueId) => {
     entities[id] = item
   })
 
-  return { ids: [ ...ids ], entities: { ...entities }, ...rest }
+  return { ...state, users: {ids: [ ...ids ], entities: { ...entities }, ...rest} }
 }
 
 export default handleActions({
 
-  FETCH_USER: (state, action) => {
-    const { entities, ...rest } = state
-    entities[action.payload.user_id] = action.payload
-    return { entities: { ...entities }, ...rest }
-  },
+  [FETCH_USER]: (state, action) => ({
+    ...state, user: action.payload || []
+  }),
 
-  FETCH_USERS: (state, action) => transform(state, action.payload.items, 'user_id')
+  [FETCH_USERS]: (state, action) => transform(state, action.payload.items, 'user_id')
 
-}, {
-  ids: [],
-  entities: {},
-  mata: {
-    // uniqueId: 'user_id'
-  }
-})
+}, {})

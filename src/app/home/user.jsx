@@ -5,7 +5,7 @@ import { Menu, Dropdown, Icon } from 'antd'
 
 @connect(state => ({
   user_id: state.tokens.user_id,
-  entities: state.users.entities
+  entities: state.users.users && state.users.user.entities
 }))
 export default class extends Component {
 
@@ -19,7 +19,7 @@ export default class extends Component {
 
     let nick_name
 
-    if (user_id && entities[user_id]) {
+    if (user_id && entities && entities[user_id]) {
       nick_name = entities[user_id].nick_name
     }
 

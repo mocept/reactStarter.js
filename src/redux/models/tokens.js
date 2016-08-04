@@ -14,8 +14,8 @@ export default class extends REST {
   /**
    * @override
    */
-  GET (options) {
-    return new Promise(resolve => resolve())
+  DELETE (options) {
+    return new Promise(resolve => resolve({}))
   }
 
 }
