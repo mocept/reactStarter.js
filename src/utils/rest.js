@@ -74,7 +74,7 @@ const configStraight = options => {
   options.vars = vars
 }
 
-const configDispatcher = options => {
+/* const configDispatcher = options => {
   const dispatcher = CONFIG.DISPATCHER
   // 未开启代理
   if (!dispatcher) {
@@ -110,7 +110,7 @@ const configDispatcher = options => {
 
   // 修改 api
   options.api = '/' + dispatcher.api + api
-}
+}*/
 
 const configAuthorization = options => {
   const { res, vars, method, headers } = options

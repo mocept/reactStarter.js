@@ -9,7 +9,7 @@ import Item from './item'
 
 @connect(state => ({
   user_id: state.tokens.user_id,
-  users: state.users,
+  users: state.users
 }), dispatch => ({
   ...bindActionCreators({ fetchUsers }, dispatch)
 }))
