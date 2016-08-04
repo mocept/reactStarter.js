@@ -19,6 +19,7 @@ export default class extends Component {
         <Menu mode="horizontal" theme="light">
           <Menu.Item>
             <Link to="/users" activeClassName="active">用户</Link>
+            <Link to="/logout">logout</Link>
           </Menu.Item>
         </Menu>
       </nav>
