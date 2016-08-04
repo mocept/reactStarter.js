@@ -41,10 +41,10 @@ export default class extends Component {
     })
   }
 
-  _fetchUsers () {
+  _fetchUsers (page) {
     this.props.fetchUsers({
       data: {
-        $offset: this.state.currentPage,
+        $offset: page || this.state.currentPage,
         $limit: this.state.pageSize
       },
       vars: {
@@ -64,16 +64,20 @@ export default class extends Component {
 
   @autobind
   next () {
+    debugger
     const { currentPage } = this.state
 
     this.setState({
       ...this.state, currentPage: currentPage + 1
     })
+    this._fetchUsers(currentPage + 1)
   }
 
   render () {
-    const { items } = this.state
-    return items.length === 0 ? null : (
+    debugger
+    // const { items } = this.state
+    const items = []
+    return items.length === 0 ? <p>暂无数据</p> : (
       <div className="app-users-index">
         <ul>
           {items.map(item => <Item key={item.user_id} user={item} />)}
