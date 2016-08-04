@@ -5,22 +5,22 @@ import { Menu, Dropdown, Icon } from 'antd'
 
 @connect(state => ({
   user_id: state.tokens.user_id,
-  entities: state.users.users && state.users.user.entities
+  user_info: state.users.user
 }))
 export default class extends Component {
 
   static propTypes = {
     user_id: PropTypes.number,
-    entities: PropTypes.object
+    user_info: PropTypes.object
   };
 
   render () {
-    const { user_id, entities } = this.props
+    const { user_id, user_info } = this.props
 
     let nick_name
 
-    if (user_id && entities && entities[user_id]) {
-      nick_name = entities[user_id].nick_name
+    if (user_id && user_info) {
+      nick_name = user_info.nick_name || user_info.user_name || user_info.org_exinfo && user_info.org_exinfo.real_name
     }
 
     let Element
