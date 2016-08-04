@@ -60,11 +60,11 @@ export default class extends Component {
     this.setState({
       ...this.state, currentPage: currentPage - 1
     })
+    this._fetchUsers(currentPage - 1)
   }
 
   @autobind
   next () {
-    debugger
     const { currentPage } = this.state
 
     this.setState({
@@ -74,9 +74,7 @@ export default class extends Component {
   }
 
   render () {
-    debugger
-    // const { items } = this.state
-    const items = []
+    const { items } = this.state
     return items.length === 0 ? <p>暂无数据</p> : (
       <div className="app-users-index">
         <ul>

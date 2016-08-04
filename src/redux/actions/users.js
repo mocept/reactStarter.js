@@ -9,4 +9,5 @@ export const fetchUser = createAction(FETCH_USER,
 
 export const fetchUsers = createAction(FETCH_USERS,
   async payload => await new OrganizationUsers().GET(payload),
-  ({ data = {} }) => data)
+  ({meta = {}}) => meta
+)
