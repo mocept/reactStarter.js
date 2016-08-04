@@ -2,6 +2,7 @@ import { handleActions } from 'redux-actions'
 import {FETCH_USER, FETCH_USERS} from '../constants'
 
 const transform = (state, items = [], uniqueId) => {
+  debugger
   const { ids, entities, ...rest } = state.users
 
   items.forEach(item => {
@@ -25,6 +26,9 @@ export default handleActions({
     ...state, user: action.payload || []
   }),
 
-  [FETCH_USERS]: (state, action) => transform(state, action.payload.items, 'user_id')
+  // [FETCH_USERS]: (state, action) => transform(state, action.payload.items, 'user_id')
+  [FETCH_USERS]: (state, action) => ({
+    ...state, users: action.payload || {}
+  })
 
 }, {})

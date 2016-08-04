@@ -9,7 +9,7 @@ import Item from './item'
 
 @connect(state => ({
   user_id: state.tokens.user_id,
-  users: state.users
+  users: state.users,
 }), dispatch => ({
   ...bindActionCreators({ fetchUsers }, dispatch)
 }))
@@ -23,64 +23,64 @@ export default class extends Component {
 
   constructor (props, context) {
     super(props, context)
-
     this.state = {
-      data: {
-        $offset: 0,
-        $limit: 20
-      },
-      vars: {
-        org_id: props.users.entities[props.user_id].org_exinfo.org_id
-      }
+      currentPage: 0,
+      pageSize: 20,
+      items: (props.users && props.users.items) || []
     }
   }
 
   componentDidMount () {
-    this.props.fetchUsers(this.state)
+    this._fetchUsers()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const {items} = nextProps.users.users
+    this.setState({
+      ...this.state, items: items
+    })
+  }
+
+  _fetchUsers () {
+    this.props.fetchUsers({
+      data: {
+        $offset: this.state.currentPage,
+        $limit: this.state.pageSize
+      },
+      vars: {
+        org_id: this.props.users.user.org_exinfo.org_id
+      }
+    })
   }
 
   @autobind
   prev () {
-    const { $offset, $limit } = this.state.data
+    const { currentPage } = this.state
 
     this.setState({
-      data: {
-        $offset: $offset - $limit,
-        $limit
-      }
+      ...this.state, currentPage: currentPage - 1
     })
-
-    this.props.fetchUsers(this.state)
   }
 
   @autobind
   next () {
-    const { $offset, $limit } = this.state.data
+    const { currentPage } = this.state
 
     this.setState({
-      data: {
-        $offset: $offset + $limit,
-        $limit
-      }
+      ...this.state, currentPage: currentPage + 1
     })
-
-    this.props.fetchUsers(this.state)
   }
 
   render () {
-    const { ids, entities } = this.props.users
-    const { $offset, $limit } = this.state.data
-    const slicedIds = ids.slice($offset, $offset + $limit)
-    console.log(slicedIds)
-    return (
+    const { items } = this.state
+    return items.length === 0 ? null : (
       <div className="app-users-index">
         <ul>
-          {slicedIds.map(id => <Item key={id} user={entities[id]} />)}
+          {items.map(item => <Item key={item.user_id} user={item} />)}
         </ul>
         <button onClick={this.prev}>prev</button>
         <button onClick={this.next}>next</button>
       </div>
     )
   }
-
 }
