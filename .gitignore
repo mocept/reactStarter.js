@@ -21,3 +21,7 @@ npm-debug.log*
 # dist
 
 dist/
+
+# webapp
+
+webapp/
