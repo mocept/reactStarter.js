@@ -4,7 +4,7 @@
   "description": "teto.js",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf ./webapp",
     "compile": "babel-node .bin/compile",
     "lint": "eslint ./src",
     "lint:fix": "npm run lint -- --fix",
