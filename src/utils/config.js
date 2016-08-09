@@ -67,8 +67,8 @@ const LOC_RES = {
 
 let UC_RES = {
   module: 'uc',
-  protocol: 'https://',
-  ver: 'v0.9'
+  protocol: 'http://',
+  ver: 'api'
 }
 let CS_RES = {
   module: 'cs',
@@ -81,8 +81,8 @@ switch (ENV) {
   case DEBUG:
   case PREPRODUCTION:
   case PRESSURE:
-    UC_RES.host = 'ucbetapi.101.com'
-    CS_RES.host = 'betacs.101.com'
+    UC_RES.host = 'laraveldingo'
+    CS_RES.host = 'laraveldingo'
     break
   case PRODUCTION:
     UC_RES.host = 'aqapi.101.com'
