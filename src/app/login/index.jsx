@@ -48,8 +48,8 @@ export default class extends Component {
       } else {
         props.fetchUser({
           payload: {
-            vars:{
-              user_id:props.user_id
+            vars: {
+              user_id: props.user_id
             }
           }
         })

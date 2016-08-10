@@ -73,7 +73,7 @@ const configStraight = options => {
   options.vars = vars
 }
 
-const configDispatcher = options => {
+/* const configDispatcher = options => {
   const dispatcher = CONFIG.DISPATCHER
 
   // 未开启代理
@@ -107,7 +107,7 @@ const configDispatcher = options => {
 
   // 修改 api
   options.api = '/' + dispatcher.api + api
-}
+}*/
 // const configVorg = options => {
 //   const { headers } = options
 //   const vorgid = getAuth('vorg_id')
@@ -250,10 +250,10 @@ export default class REST {
 
     // id, data, vars, etc
     configStraight(options)
-    const queryIndex = options.api.indexOf('?')
-    const uriApi = options.api.substring(0, queryIndex)
-    const key = uriApi + '[' + options.method + ']'
-    const blacklist = CONFIG.DISPATCHER.blacklist
+    // const queryIndex = options.api.indexOf('?')
+    // const uriApi = options.api.substring(0, queryIndex)
+    // const key = uriApi + '[' + options.method + ']'
+    // const blacklist = CONFIG.DISPATCHER.blacklist
     // const resReg = blacklist[options.res.module]
     // const isDispatcher = !resReg || !resReg.test(key)
     // dispatcher
