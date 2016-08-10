@@ -3,6 +3,7 @@ import CONFIG from 'utils/config'
 import auth from 'utils/auth'
 import Promise from 'nd-promise'
 
+// import {getAuth} from 'utils/userauth'
 /**
  * options' structure
  * {
@@ -25,8 +26,6 @@ const GET = 'GET'
 const PATCH = 'PATCH'
 const POST = 'POST'
 const PUT = 'PUT'
-
-const orgName = CONFIG.ORG_NAME
 
 const encode = window.encodeURIComponent
 
@@ -76,6 +75,7 @@ const configStraight = options => {
 
 /* const configDispatcher = options => {
   const dispatcher = CONFIG.DISPATCHER
+
   // 未开启代理
   if (!dispatcher) {
     return
@@ -90,19 +90,16 @@ const configStraight = options => {
   if (dispatcher.res === options.res) {
     return
   }
-
-  // 不在白名单
-  if (dispatcher.ignore.indexOf(options.res) !== -1) {
-    return
-  }
-
   const { res, api, vars, headers } = options
-
+  const encodedVars = {}
+  Object.keys(vars).forEach(key => {
+    encodedVars[key] = encode(vars[key])
+  })
   headers.Dispatcher = JSON.stringify({
     ...res,
     api: encode(api),
     // use vars, NOT var any more
-    vars: vars
+    vars: encodedVars
   })
 
   // 修改 res
@@ -111,6 +108,11 @@ const configStraight = options => {
   // 修改 api
   options.api = '/' + dispatcher.api + api
 }*/
+// const configVorg = options => {
+//   const { headers } = options
+//   const vorgid = getAuth('vorg_id')
+//   if (vorgid) headers.vorgId = vorgid
+// }
 
 const configAuthorization = options => {
   const { res, vars, method, headers } = options
@@ -125,6 +127,7 @@ const configAuthorization = options => {
       )
     })
   }
+
   // has uc tokens
   if (auth.hasAuthorization) {
     // data.headers.Authorization = 'DEBUG userid=220267,realm=***.nd'
@@ -135,6 +138,17 @@ const configAuthorization = options => {
   }
 
   options.api = api
+}
+
+const configRequest = options => {
+  // console.log(options)
+  const { res, api, data, method, headers } = options
+  return {
+    url: res.protocol + res.host + '/' + res.ver + api,
+    method,
+    data,
+    headers
+  }
 }
 
 export default class REST {
@@ -150,6 +164,10 @@ export default class REST {
     // id
     key: 'id'
   };
+
+  constructor (val) {
+    this.__resource = { ...this.__resource, ...val }
+  }
 
   get resource () {
     return this.__resource
@@ -188,12 +206,11 @@ export default class REST {
   /**
    * @protected
    */
-  request (_options, method, callback) {
-    let options = {
+  request (_options, method) {
+    const options = {
       method: method,
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'orgname': orgName
+        'Content-Type': 'application/json; charset=utf-8'
       },
       data: {}
     }
@@ -209,144 +226,89 @@ export default class REST {
       if (method === GET) {
         Object.assign(finalData, this.defaults)
       }
-
+      let isArray = false
       if (_options) {
         const { data, ...rest } = _options
         Object.assign(options, rest)
-        Object.assign(finalData, data)
+        if (Array.isArray(data)) {
+          isArray = true
+        } else {
+          Object.assign(finalData, data)
+        }
       }
-
+      if (isArray) {
+        options.data = _options.data
+      } else {
+        Object.assign(options.data, finalData)
+      }
       Object.assign(options.data, finalData)
     }
 
     // interceptor for options
-    const optionsInterceptor = this.interceptors.options
-    options = optionsInterceptor(options)
+    // const optionsInterceptor = this.interceptors.options
+    // options = optionsInterceptor(options)
 
     // id, data, vars, etc
     configStraight(options)
-
+    // const queryIndex = options.api.indexOf('?')
+    // const uriApi = options.api.substring(0, queryIndex)
+    // const key = uriApi + '[' + options.method + ']'
+    // const blacklist = CONFIG.DISPATCHER.blacklist
+    // const resReg = blacklist[options.res.module]
+    // const isDispatcher = !resReg || !resReg.test(key)
     // dispatcher
-    // options.flag !== -1 && configDispatcher(options)
+    // if (isDispatcher) {
+    //   configDispatcher(options)
+    // }
 
     // authorization
     configAuthorization(options)
-    // configRequest(options)
 
-    callback(options)
-  }
-
-  [DELETE] (options) {
     return new Promise((resolve, reject) => {
-      this.request(options, DELETE, (options) => {
-        if (!options) {
-          return 'option can not be null'
-        }
-        let { api } = options
-        const { res, headers } = options
-        const host = res.protocol + res.host + '/' + res.ver
-
-        api = host + api
-
-        options && httpRequest
-        .del(api)
-        .set(headers)
-        .end((err, res) => {
-          return !err ? resolve(res.body) : reject(err)
-        })
+      const {url, method, data, headers} = configRequest(options)
+      let request = null
+      switch (method) {
+        case DELETE:
+          request = httpRequest.del(url)
+          break
+        case GET:
+          request = httpRequest.get(url)
+          break
+        case PATCH:
+          request = httpRequest.patch(url).send(data)
+          break
+        case POST:
+          request = httpRequest.post(url).send(data)
+          break
+        case PUT:
+          request = httpRequest.put(url).send(data)
+          break
+      }
+      request.set(headers).end((err, res) => {
+        if (err && err.statusCode !== 200) {
+          return reject(res.body)
+        } return err ? resolve(err.rawResponse) : resolve(res.body)
       })
     })
+  }
+  [DELETE] (options) {
+    return this.request(options, DELETE)
   }
 
   [GET] (options) {
-    return new Promise((resolve, reject) => {
-      this.request(options, GET, (options) => {
-        if (!options) {
-          return 'option can not be null'
-        }
-        let { api } = options
-        const { res, headers } = options
-        const host = res.protocol + res.host + '/' + res.ver
-
-        api = host + api
-
-        options && httpRequest
-        .get(api)
-        .set(headers)
-        .end((err, res) => {
-          return !err ? resolve(res.body) : reject(err)
-        })
-      })
-    })
+    return this.request(options, GET)
   }
 
   [PATCH] (options) {
-    return new Promise((resolve, reject) => {
-      this.request(options, PATCH, (options) => {
-        if (!options) {
-          return 'option can not be null'
-        }
-        let { api } = options
-        const { res, headers, data } = options
-        const host = res.protocol + res.host + '/' + res.ver
-
-        api = host + api
-
-        options && httpRequest
-        .patch(api)
-        .send(data)
-        .set(headers)
-        .end((err, res) => {
-          return !err ? resolve(res.body) : reject(err)
-        })
-      })
-    })
+    return this.request(options, PATCH)
   }
 
   [POST] (options) {
-    return new Promise((resolve, reject) => {
-      this.request(options, POST, (options) => {
-        if (!options) {
-          return 'option can not be null'
-        }
-        let { api } = options
-        const { res, headers, data } = options
-        const host = res.protocol + res.host + '/' + res.ver
-
-        api = host + api
-
-        options && httpRequest
-        .post(api)
-        .send(data)
-        .set(headers)
-        .end((err, res) => {
-          return !err ? resolve(res.body) : reject(err)
-        })
-      })
-    })
+    return this.request(options, POST)
   }
 
   [PUT] (options) {
-    return new Promise((resolve, reject) => {
-      this.request(options, PUT, (options) => {
-        if (!options) {
-          return 'option can not be null'
-        }
-        let { api } = options
-        const { res, headers, data } = options
-        const host = res.protocol + res.host + '/' + res.ver
-
-        api = host + api
-
-        options && httpRequest
-        .put(api)
-        .send(data)
-        .set(headers)
-        .end((err, res) => {
-          return !err ? resolve(res.body) : reject(err)
-        })
-      })
-    })
+    return this.request(options, PUT)
   }
 
 }

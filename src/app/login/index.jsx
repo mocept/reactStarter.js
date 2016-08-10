@@ -46,7 +46,13 @@ export default class extends Component {
       if (props.user && props.user.user_id === props.user_id) {
         this.context.router.push('/')
       } else {
-        props.fetchUser(props.user_id)
+        props.fetchUser({
+          payload: {
+            vars: {
+              user_id: props.user_id
+            }
+          }
+        })
       }
     }
   }
@@ -66,10 +72,17 @@ export default class extends Component {
     const { login_name, password } = this.state
 
     this.props.login({
-      data: {
-        login_name: login_name,
-        password: md5(password)
+      payload: {
+        data: {
+          login_name: login_name,
+          password: md5(password)
+        }
       }
+/*      then: [data => {
+        const test =JSON.parse(JSON.stringify(data))
+        test.test = 'aa'
+        return test
+      }]*/
     })
   }
 
