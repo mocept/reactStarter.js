@@ -7,7 +7,7 @@ export default class extends REST {
 
   resource = {
     res: CONFIG.UC_RES,
-    api: '/tokens',
+    api: '/user/login',
     key: 'access_token'
   };
 

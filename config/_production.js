@@ -8,5 +8,5 @@ export default () => ({
     chunkModules : true,
     colors : true
   },
-  dir_dist: './webapp'
+  dir_dist: '../webapp'
 })
