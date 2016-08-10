@@ -85,8 +85,8 @@ switch (ENV) {
     CS_RES.host = 'laraveldingo'
     break
   case PRODUCTION:
-    UC_RES.host = 'aqapi.101.com'
-    CS_RES.host = 'cs.101.com'
+    UC_RES.host = 'laraveldingo'
+    CS_RES.host = 'laraveldingo'
     break
   case AWS:
     UC_RES.host = 'awsuc.101.com'
