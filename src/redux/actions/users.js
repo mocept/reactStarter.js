@@ -1,4 +1,3 @@
-import { createAction } from 'redux-actions'
 import {FETCH_USER, FETCH_USERS} from '../constants'
 
 import Users from '../models/users'
