@@ -43,12 +43,14 @@ export default class extends Component {
 
   _fetchUsers (page) {
     this.props.fetchUsers({
-      data: {
-        $offset: page || this.state.currentPage,
-        $limit: this.state.pageSize
-      },
-      vars: {
-        org_id: this.props.users.user.org_exinfo.org_id
+      payload: {
+        data: {
+          $offset: page || this.state.currentPage,
+          $limit: this.state.pageSize
+        },
+        vars: {
+          org_id: this.props.users.user.org_exinfo.org_id
+        }
       }
     })
   }

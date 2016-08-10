@@ -27,7 +27,10 @@ export default class extends Component {
 
   _logout (access_token) {
     if (access_token) {
-      this.props.logout(access_token)
+      this.props.logout({
+        payload: access_token,
+        then: [() => null]
+      })
     } else {
       this.context.router.push('/')
     }

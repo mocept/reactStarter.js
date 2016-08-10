@@ -11,6 +11,10 @@ export default class extends REST {
     key: 'user_id'
   };
 
+  constructor (resource) {
+    super()
+    this.resource = Object.assign({}, this.resource, resource)
+  }
   /**
    * @override
    */
