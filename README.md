@@ -48,3 +48,9 @@ $ npm rebuild node-sass
 ```
 
 [![](teto.png)](http://seiga.nicovideo.jp/seiga/im2044734)
+
+# 自定义使用
+
+主要修改
+./config 环境配置（可不动）
+./src/redux/utils auth.js 认证, config.js 配置请求的地址 rest.js请求的封装
