@@ -1,4 +1,3 @@
-import { createAction } from 'redux-actions'
 import {LOGIN, LOGOUT} from '../constants'
 import { basicRestAction } from 'utils/restAction'
 import Tokens from '../models/tokens'

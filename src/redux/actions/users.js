@@ -1,4 +1,3 @@
-import { createAction } from 'redux-actions'
 import {FETCH_USER, FETCH_USERS} from '../constants'
 
 import Users from '../models/users'
@@ -14,6 +13,6 @@ export const fetchUsers = createAction(FETCH_USERS,
   ({meta = {}}) => meta
 )
 */
-export const fetchUser = basicRestAction(FETCH_USER, Users, 'GET', {api: '/users/{user_id}'})
+export const fetchUser = basicRestAction(FETCH_USER, Users, 'GET', {api: '/user/{user_id}'})
 
 export const fetchUsers = basicRestAction(FETCH_USERS, Users, 'GET', {api: '/organizations/{org_id}/users'})
